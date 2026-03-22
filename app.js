@@ -4,22 +4,27 @@ let currentPage = 1;
 let searchQuery = "";
 let totalProducts = 0;
 
+const btnPrev = document.getElementById('prev-btn');
+const btnNext = document.getElementById('next-btn');
+const pageInfo = document.getElementById('page-info');
 
 async function pobierzProdukty() {
 
+    // sciagniecie produktow na parametrach wyszukiwania ilosci i przeskoku
     const response = await fetch(`https://dummyjson.com/products/search?q=${searchQuery}&limit=${limit}&skip=${skip}`);
 
+    // parsowanie json na js
     const data = await response.json();
 
-
-
+    // wgranie danych do konsoli - sprawdzenie czy dziala
     console.log(data);
 
     totalProducts = data.total;
 
+    // strona x 'z' y 
     let totalPages = Math.ceil(totalProducts / limit) || 1;
-
     pageInfo.innerText = `Strona ${currentPage} z ${totalPages}`;
+
 
     const kontener = document.getElementById('products-container');
     const ladowanie = document.getElementById('loading-message');
@@ -28,14 +33,16 @@ async function pobierzProdukty() {
 
     const listaProdoktow = data.products;
 
+    // czyszczenie strony przy zmianie na kolejna/poprzednia
     kontener.innerHTML = '';
 
+    // obsluga bledu i sanityzacja innerTextem
     if (listaProdoktow.length == 0) {
         kontener.innerText = `Brak wynikow dla hasla: ${searchQuery}.`;
         return;
     }
 
-    
+    // petla dodajaca produkty na strone
     for (let product of listaProdoktow) {
 
         let kafelek = document.createElement('div');
@@ -56,11 +63,10 @@ async function pobierzProdukty() {
 pobierzProdukty();
 
 
-const btnPrev = document.getElementById('prev-btn');
-const btnNext = document.getElementById('next-btn');
-const pageInfo = document.getElementById('page-info');
 
 
+
+// kolejna strona
 btnNext.addEventListener('click', () => {
     if (skip + limit < totalProducts) {
         currentPage++;
@@ -72,6 +78,7 @@ btnNext.addEventListener('click', () => {
     }
 });
 
+// poprzednia strona
 btnPrev.addEventListener('click', () => {
     if (currentPage > 1) {
         currentPage--;
@@ -84,19 +91,19 @@ btnPrev.addEventListener('click', () => {
     }
 });
 
+// pole wyszukiwania
 const searchInput = document.getElementById('search-input');
 let delay;
 
 searchInput.addEventListener('input', (event) => {
     clearTimeout(delay);
+    
+    // debouncing, timeout na 500ms
     delay = setTimeout(() => {
 
-
         searchQuery = event.target.value;
-
         skip = 0;
         currentPage = 1;
-
 
         pobierzProdukty();
     }, 500);
