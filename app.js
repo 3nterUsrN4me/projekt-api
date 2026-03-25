@@ -49,7 +49,16 @@ async function pobierzProdukty() {
 
         // obsluga bledu i sanityzacja innerTextem
         if (listaProdoktow.length == 0) {
-            kontener.innerText = `Brak wynikow dla hasla: ${searchQuery}.`;
+
+            // wersja poprawna
+            //kontener.innerText = `Brak wynikow dla hasla: ${searchQuery}.`;
+
+            // wersja podatna 
+            kontener.innerHTML = `Brak wynikow dla hasla: ${searchQuery}.`;
+
+            // przyklad eksploitacji
+            // <img src="x" onerror="alert('Włamałem się!')"></img>
+
             return;
         }
 
